@@ -47,7 +47,7 @@ app.use((req,res,next)=>{
 
 
 
-app.use("/", express.static(path.resolve(path.join(__dirname, "../web/build"))));
+app.use("/", express.static(path.resolve(path.join(__dirname, "../Web/build"))));
 
 
 
