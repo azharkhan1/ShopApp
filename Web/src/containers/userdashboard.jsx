@@ -73,6 +73,7 @@ export default function UserDashboard() {
             price: 350,
             description: "Iphone original earpods "
         },
+        
     ])
 
     function getTotal() {
@@ -150,25 +151,8 @@ export default function UserDashboard() {
                         <div className="container">
                             <div className="main-section-data">
                                 <div className="row">
-                                    <div className="col-lg-3 col-md-4 pd-left-none no-pd">
-                                        <div className="main-left-sidebar no-margin">
-                                            <div className="user-data full-width">
-                                                <div className="user-profile">
-                                                    <div className="username-dt">
-                                                        <div className="usr-pic">
-                                                        </div>
-                                                    </div>
-                                                    <div className="user-specs">
-                                                        <h3>User Name</h3>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6 col-md-8 no-pd">
+    
+                                    <div className="col-lg-9 col-md-8 no-pd">
                                         <div className="main-ws-sec">
                                             {/* <div className="post-topbar">
                                                 <div className="user-picy">
