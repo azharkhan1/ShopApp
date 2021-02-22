@@ -4,7 +4,7 @@ import "./css/app.css";
 import './css/line-awesome.css'
 import './css/style.css'
 import './css/responsive.css'
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect , useHistory } from "react-router-dom";
 import url from "../core/index";
 import axios from "axios";
 import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext"
@@ -17,7 +17,7 @@ function Signin() {
     
     const globalState = useGlobalState();
     const setGlobalState = useGlobalStateUpdate()
-    
+    var history = useHistory();
 
 
     var email = useRef();
@@ -34,9 +34,9 @@ function Signin() {
                 userPassword: password.current.value,
             },
         }).then((response) => {
-            setGlobalState((prevValue) => ({...prevValue , user: true}));
+            setGlobalState((prevValue) => ({...prevValue , loginStatus : true }));
             alert(response.data.message);
-
+            history.push("/dashboard");
         }, (error) => {
             // alert(error.response.data.message);
             console.log("an error occured");
