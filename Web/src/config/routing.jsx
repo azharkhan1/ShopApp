@@ -5,20 +5,17 @@ import {
   Redirect,
 } from "react-router-dom";
 import React from "react";
-
-
 import Signup from "../containers/signup"
 import Dashboard from "../containers/userdashboard"
-import Login from "../containers/signin";
-
 import { useGlobalState } from "../context/globalContext.js";
 import Signin from "../containers/signin";
+import AdminDashboard from "../containers/vendordashboard";
 
 export default function AppRouter() {
 
   const globalState = useGlobalState()
 
-  // console.log("user is = > ", globalState.user);
+ 
 
   return (
     <div>
@@ -26,7 +23,7 @@ export default function AppRouter() {
         {JSON.stringify(globalState)};
       </div>
       <Router>
-      
+
 
         {(globalState.loginStatus === false) ?
           <>
@@ -49,7 +46,7 @@ export default function AppRouter() {
 
         {/* private routes */}
 
-        {(globalState.loginStatus === true) ?
+        {(globalState.roll === "user" && globalState.loginStatus === true) ?
 
           <>
             <Route exact path="/">
@@ -61,6 +58,22 @@ export default function AppRouter() {
             </Route>
           </>
           : null}
+
+        {(globalState.roll === "admin" && globalState.loginStatus === true) ?
+
+          <>
+            <Route exact path="/">
+              <AdminDashboard />
+            </Route>
+
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
+          </>
+          : null}
+
+
+
       </Router >
     </div>
   );

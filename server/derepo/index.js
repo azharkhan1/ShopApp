@@ -45,6 +45,7 @@ var userSchema = new mongoose.Schema({
     userAddress : String,
     userPhone : String,
     points : String,
+    roll : String,
 });
 var userModel = mongoose.model("users", userSchema);
 

@@ -36,7 +36,7 @@ app.use(cors({
 app.use(cookieParser());
 
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin: http://localhost:3000");
     res.header("Access-Control-Allow-Credentials: true");
     res.header("Access-Control-Allow-Methods: GET, POST");
@@ -59,7 +59,6 @@ app.use("/auth", authRoutes);
 
 
 app.use(function (req, res, next) {
-    console.log("req.cookies: ", req.cookies);
     if (!req.cookies.jToken) {
         res.status(401).send("include http-only credentials with every request")
         return;
@@ -117,8 +116,8 @@ app.use(function (req, res, next) {
 })
 
 app.get("/profile", (req, res, next) => {
-    userModel.findById(req.body.jToken.id, "userName userEmail userAddress userPhone" , 
-        
+    userModel.findById(req.body.jToken.id, "userName userEmail userAddress userPhone roll",
+
         function (err, doc) {
             if (!err) {
                 res.send({
@@ -132,32 +131,18 @@ app.get("/profile", (req, res, next) => {
         })
 });
 
-app.get("/vendorProfile", (req, res, next) => {
-    vendorModel.findById(req.body.jToken.id, 'vendorName vendorEmail vendorPhone',
-        function (err, doc) {
-            if (!err) {
-                res.send({
-                    profile: doc
-                })
-            } else {
-                res.status(500).send({
-                    message: "server error"
-                })
-            }
-        })
-});
 
 app.post("/placeOrder", (req, res, next) => {
-    console.log("req.body is = > " ,req.body);
-
-    if (req.body.Earpod || req.body.Charger ||  req.body.Battery  ) {
+    console.log("req.body is = > ", req.body);
+    
+    if (req.body.Earpod || req.body.Charger || req.body.Battery) {
         userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userFound) => {
             if (!err) {
                 order.create({
-                    Earpod: req.body.earpod,
-                    Charger: req.body.charger,
-                    Battery: req.body.battery,
-                    total : req.body.total,
+                    Earpod: req.body.Earpod,
+                    Charger: req.body.Charger,
+                    Battery: req.body.Battery,
+                    total: req.body.total,
                     userEmail: req.body.jToken.userEmail,
                     userName: req.body.jToken.userName,
                 }).then((orderPlaced) => {
@@ -189,29 +174,34 @@ app.post("/placeOrder", (req, res, next) => {
 
 });
 
-app.get("/myRequests", (req, res, next) => {
+app.get("/getOrders", (req, res, next) => {
 
-    userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userData) => {
+
+    order.find({} , (err, data) => {
         if (!err) {
-            order.find({ userEmail: req.body.jToken.userEmail }, (err, data) => {
-                if (!err) {
-                    res.status(200).send({
-                        placedRequests: data,
-                    });
-                }
-                else {
-                    console.log("error : ", err);
-                    res.status(500).send("error");
-                }
-            })
+            res.status(200).send({
+                placedRequests: data,
+            });
         }
         else {
             console.log("error : ", err);
             res.status(500).send("error");
         }
     })
-});
 
+
+
+});
+app.post("/logout", (req, res, next) => {
+    res.cookie('jToken', "", {
+        maxAge: 86_400_000,
+        httpOnly: true
+    });
+    res.clearCookie();
+
+    res.send("logout succesfully");
+
+})
 
 
 server.listen(PORT, () => {

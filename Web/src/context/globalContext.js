@@ -15,6 +15,7 @@ export function GlobalStateProvider({ children }) {
     const [data, setData] = useState({
         user: null,
         loginStatus: false,
+        roll : null,
     })
 
 
@@ -24,7 +25,7 @@ export function GlobalStateProvider({ children }) {
             url: url + "/profile",
             withCredentials: true,
         }).then((response) => {
-                setData(prev => ({ ...prev, loginStatus: true , user : response.data.profile  }))
+                setData(prev => ({ ...prev, loginStatus: true , user : response.data.profile , roll : response.data.profile.roll }));
         }, (error) => {
             setData(prev => ({ ...prev, loginStatus: false }))
             console.log("error ==============> ", error.response.status );

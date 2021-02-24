@@ -39,6 +39,7 @@ api.post("/signup", (req, res, next) => {
                         userName: req.body.userName,
                         userPhone : req.body.userPhone,
                         userAddress : req.body.userAddress,
+                        roll : req.body.roll ? req.body.roll : "user",
                     });
 
                     newUser.save((err, data) => {
@@ -97,7 +98,7 @@ api.post("/login", (req, res, next) => {
                             userEmail: user.userEmail,
                             userName: user.userName,
                             userPassword: user.userPassword,
-                            profileUrl: user.profileUrl,
+                            roll : user.roll,
                         }, SERVER_SECRET)
 
                     res.cookie('jToken', token, {
@@ -128,16 +129,6 @@ api.post("/login", (req, res, next) => {
     })
 })
 
-
-api.post("/logout", (req, res, next) => {
-    res.cookie('jToken', "", {
-        maxAge: 86_400_000,
-        httpOnly: true
-    });
-
-    res.send("logout succesfully");
-
-})
 
 api.post("/forget-password", (req, res, next) => {
 

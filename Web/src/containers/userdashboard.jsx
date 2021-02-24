@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
 import url from "../core/index";
 import "./css/app.css";
 import './css/line-awesome.css'
@@ -11,27 +10,17 @@ import './css/font-awesome.min.css'
 import './css/line-awesome-font-awesome.min.css'
 import './css/jquery.mCustomScrollbar.min.css'
 import './css/flatpickr.min.css'
-import product from "./images/product.png";
 import "./css/dashboard.css";
+
+
+// import global state
+import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
+
+
 axios.defaults.withCredentials = true
 
 
 
-
-// function logout() {
-
-//     axios({
-//         method: 'post',
-//         url: url + "/auth/logout",
-
-//     }).then((response) => {
-//         alert(response.data.message);
-//         setLogout(true);
-
-//     }, (error) => {
-//         alert(error.response.data.message);
-//     })
-// }
 
 
 
@@ -41,7 +30,8 @@ axios.defaults.withCredentials = true
 export default function UserDashboard() {
 
 
-
+    const globalState = useGlobalState();
+    const updateGlobalState = useGlobalStateUpdate();
     var [cart, setCart] = useState([]);
     var [orderMessage, setMessage] = useState("Cart");
 
@@ -66,8 +56,6 @@ export default function UserDashboard() {
         },
 
     ])
-
-
 
     function addCart(value, index) {
         var products_change = [...products];
@@ -129,7 +117,7 @@ export default function UserDashboard() {
 
 
         cart.map((values) => {
-
+            
             var Battery = values.product === "Battery" ? values.quantity : 0;
             var Charger = values.product === "Charger" ? values.quantity : 0;
             var Earpod = values.product === "Earpod" ? values.quantity : 0;
@@ -143,35 +131,62 @@ export default function UserDashboard() {
                 data.Earpod = Earpod;
             }
             console.log(data);
-            axios({
-                method: 'post',
-                url: `${url}/placeOrder`,
-                data: data,
-                total: productTotal,
-            }).then((response) => {
-                console.log("response is = > ", response.data);
-                setMessage("Your order has been placed");
-                cart.map((value) => {
-                    value.quantity = 0
-                    setCart([]);
-                });
-
-                products.map((value)=>value.added=false);
-
-            }, (error) => {
-                console.log("an error occured");
-            })
         })
-        console.log("cart is = > ", cart);
-
+        axios({
+            method: 'post',
+            url: `${url}/placeOrder`,
+            data: data,
+            total: productTotal,
+        }).then((response) => {
+            console.log("response is = > ", response.data);
+            setMessage("Your order has been placed");
+            cart.map((value) => {
+                value.quantity = 0
+                setCart([]);
+            });
+        }, (error) => {
+            console.log("an error occured");
+        })
+        products.map((value) => value.added = false);
     }
 
+    function logout() {
+        axios({
+            method: 'post',
+            url: `${url}/logout`
 
+        }).then((response) => {
+            alert(response.data);
+            updateGlobalState((prevValue) => ({ ...prevValue, loginStatus: false, user: null, roll: null }));
+
+        }, (error) => {
+            console.log("error=>", error);
+        })
+    }
 
 
     return (
         <div>
             <div className="wrapper">
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <a className="navbar-brand" href="#">Navbar w/ text</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" />
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarText">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+                            </li>
+                        </ul>
+                        <span className="navbar-text" onClick={logout}>
+                            <a href="#" className="nav-link logout" title="">
+                                <span><i className="fa fa-sign-out" aria-hidden="true"></i></span>
+                                        Logout
+                                    </a>
+                        </span>
+                    </div>
+                </nav>
                 <main>
                     <div className="main-section">
                         <div className="container">
