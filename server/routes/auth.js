@@ -184,6 +184,7 @@ api.post("/forget-password", (req, res, next) => {
 })
 
 api.post("/forget-password-step-2", (req, res, next) => {
+    console.log('reqbody',req.body);
     if (!req.body.userEmail || !req.body.otp || !req.body.newPassword) {
         res.status(400).send(`
         Please send email in JSON body
@@ -192,7 +193,7 @@ api.post("/forget-password-step-2", (req, res, next) => {
         "newPassword" : "123456"
         "otp" : "xxxxx"
     `)
-
+        console.log('error part hai json ka');
         return;
     }
     userModel.findOne({ userEmail: req.body.userEmail },

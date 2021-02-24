@@ -1,9 +1,3 @@
-// read: 
-// Querying/reading data from database: https://mongoosejs.com/docs/models.html#querying
-// deleting data from database: https://mongoosejs.com/docs/models.html#deleting
-// updating data in database: https://mongoosejs.com/docs/models.html#updating
-
-
 var express = require("express");
 var morgan = require("morgan");
 var bodyParser = require("body-parser");
@@ -40,13 +34,13 @@ app.use(cors({
 app.use(cookieParser());
 
 
-// app.use((req, res, next) => {
-//     res.header("Access-Control-Allow-Origin: http://localhost:3000");
-//     res.header("Access-Control-Allow-Credentials: true");
-//     res.header("Access-Control-Allow-Methods: GET, POST");
-//     res.header("Access-Control-Allow-Headers: Content-Type, *");
-//     next();
-// })
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin: http://localhost:3000");
+    res.header("Access-Control-Allow-Credentials: true");
+    res.header("Access-Control-Allow-Methods: GET, POST");
+    res.header("Access-Control-Allow-Headers: Content-Type, *");
+    next();
+})
 
 
 
@@ -210,4 +204,3 @@ app.post("/logout", (req, res, next) => {
 server.listen(PORT, () => {
     console.log("server is running on: ", PORT);
 })
-

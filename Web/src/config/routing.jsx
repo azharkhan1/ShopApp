@@ -5,11 +5,17 @@ import {
   Redirect,
 } from "react-router-dom";
 import React from "react";
+
+// Importing containers
 import Signup from "../containers/signup"
 import Dashboard from "../containers/userdashboard"
-import { useGlobalState } from "../context/globalContext.js";
-import Signin from "../containers/signin";
 import AdminDashboard from "../containers/vendordashboard";
+import Signin from "../containers/signin";
+import ForgetPassword from "../containers/forget-password";
+
+
+
+import { useGlobalState } from "../context/globalContext.js";
 
 export default function AppRouter() {
 
@@ -29,9 +35,9 @@ export default function AppRouter() {
             <Route path="/signup">
               <Signup />
             </Route>
-            {/* <Route path="/forget_password">
+            <Route path="/forget-password">
             <ForgetPassword />
-          </Route> */}
+          </Route>
 
             <Route path="*">
               <Redirect to="/" />

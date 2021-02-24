@@ -4,47 +4,75 @@ import "./css/app.css";
 import './css/line-awesome.css'
 import './css/style.css'
 import './css/responsive.css'
-import { Link, Redirect , useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import url from "../core/index";
 import axios from "axios";
-import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext"
+
 
 axios.defaults.withCredentials = true
 
 
 
-function Signin() {
-    
-    const globalState = useGlobalState();
-    const setGlobalState = useGlobalStateUpdate()
-    var [loginResponse , setLoginResponse] = useState();
- 
-
-
-    var email = useRef();
+function ForgotPassword() {
+    var history = useHistory();
     var password = useRef();
+    var passwordText = useRef();
+    var email = useRef();
+    var otp = useRef();
+    var [forgot, setForgot] = useState(false);
+    var [forgotEmail, setForgotEmail] = useState();
 
-   
-    function login(e) {
+    useEffect(() => {
+
+        password.current.style.display = "none";
+        document.getElementById('otp').style.display = 'none';
+
+    }, [])
+
+    function forgot_password(e) {
         e.preventDefault();
         axios({
             method: 'post',
-            url: url + "/auth/login",
+            url: `${url}/auth/forget-password`,
             data: {
                 userEmail: email.current.value,
-                userPassword: password.current.value,
+              
             },
         }).then((response) => {
-            console.log("response is = > " ,response.data);
-            setGlobalState((prevValue) => ({...prevValue , loginStatus : true , user : {
-                userEmail : response.data.user.userEmail,
-                userName : response.data.user.userName,
-            } }));
-            alert(response.data.message);
+            alert('check your email');
+            setForgotEmail(email.current.value);
+            email.current.value = '';
+            password.current.style.display = 'initial'
+            otp.current.style.display = 'initial'
+            email.current.style.display = 'none';
+            document.getElementById('otp').style.display = 'initial';
+
+            setForgot(true);
         }, (error) => {
-            setLoginResponse(error.response.data.message);
+
             console.log("an error occured");
-            
+
+        })
+    }
+    function setPassword(e) {
+        e.preventDefault();
+        console.log('forgot email=>',forgotEmail);
+        axios({
+            method: 'post',
+            url: url + "/auth/forget-password-step-2",
+            data: {
+                userEmail: forgotEmail,
+                otp : otp.current.value,
+                newPassword : passwordText.current.value,
+            },
+        }).then((response) => {
+            history.push("/");
+            alert('Password changed succesfully');
+            setForgot(true);
+        }, (error) => {
+
+            alert("wrong otp or error");
+
         })
     }
 
@@ -59,9 +87,9 @@ function Signin() {
                                     <div className="cmp-info">
                                         <div className="cm-logo">
                                             <img src="" alt="" />
-                                            <p> We Deal in electronic items
+                                            <p> We Deal in Electronic items
                                                    </p>
-                                        <img src={hamaraImage} alt="" />
+                                            <img src={hamaraImage} alt="" />
                                         </div>
                                     </div>
                                 </div>
@@ -74,20 +102,20 @@ function Signin() {
 
                                         <div className="sign_in_sec current" id="tab-1">
 
-                                            <h3>Sign in</h3>
+                                            <h3>{forgot === false ? "Enter email" : "Enter new password"} </h3>
 
                                             <div className="signup-tab">
                                                 <i className="fa fa-long-arrow-left"></i>
 
                                                 <ul>
-                                                    <li data-tab="tab-3" className="current">{loginResponse}</li>
+                                                    {/* <li data-tab="tab-3" className="current">{loginResponse}</li> */}
                                                     {/* <li data-tab="tab-4"><a href="#" title="">Company</a></li> */}
                                                     {/* <li >   <Link to="/vendorsignin"> Company </Link> </li> */}
 
                                                 </ul>
                                             </div>
 
-                                            <form onSubmit={(e) => login(e)}>
+                                            <form onSubmit={(e) => forgot === false ? forgot_password(e) : setPassword(e)}>
                                                 <div className="row">
                                                     <div className="col-lg-12 no-pdd">
                                                         <div className="sn-field">
@@ -95,41 +123,28 @@ function Signin() {
                                                             <i className="la la-user"></i>
                                                         </div>
                                                     </div>
-                                                    <div className="col-lg-12 no-pdd">
+                                                    <div ref={password} className="col-lg-12 no-pdd">
                                                         <div className="sn-field">
-                                                            <input ref={password} type="password" name="password" placeholder="Enter Password" />
+                                                            <input ref={passwordText} type="password" name="password" placeholder="Enter New Password" />
+                                                            <i className="la la-lock"></i>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id='otp' className="col-lg-12 no-pdd">
+                                                        <div className="sn-field">
+                                                            <input ref={otp} type="text" name="password" placeholder="Enter Otp" />
                                                             <i className="la la-lock"></i>
                                                         </div>
                                                     </div>
                                                     <div className="col-lg-12 no-pdd">
-                                                        <div className="checky-sec">
-                                                            <div className="fgt-sec">
-                                                        
-                                                                <label >
-                                                                    <span></span>
-                                                                </label>
-                                                              <Link to='/forget-password'><small>Forgot password?</small></Link>  
-                                                            </div>
-                                                            {/* <a href="#" title="">Forgot Password?</a> */}
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-lg-12 no-pdd">
-                                                        <button type="submit" value="submit">Sign in</button>
+                                                        <button>{forgot === false ? "Proceed" : "Change Password"}</button>
                                                     </div>
                                                 </div>
                                             </form>
 
 
 
-                                            {/* <div className="login-resources">
-                                                <h4>Login Via Social Account</h4>
-                                                <ul>
-                                                    <li><a href="#" title="" className="fb"><i className="fa fa-facebook"></i>Login Via 
-                                                    Facebook</a></li>
-                                                    <li><a href="#" title="" className="tw"><i className="fa fa-twitter"></i>Login Via
-                                                    Twitter</a></li>
-                                                </ul>
-                                            </div> */}
+
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +169,7 @@ function Signin() {
 }
 
 
-export default Signin;
+export default ForgotPassword;
 
 
 

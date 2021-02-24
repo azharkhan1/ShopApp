@@ -23,11 +23,11 @@ import socket from "../config/socket";
 
 export default function VendorDashboard() {
   
+    console.log('socket is=>',socket);
     const globalState = useGlobalState();
     const updateGlobalState = useGlobalStateUpdate();
 
     const [orders, setOrders] = useState([]);
-    const [message, setMessage] = useState(false);
     const [realTime , setRealTime] = useState(false);
     useEffect(() => {
         let arr = [];
@@ -51,7 +51,7 @@ export default function VendorDashboard() {
         socket.on('requests' ,(data)=>{
             setRealTime(!realTime);
         })
-    }, [])
+    }, [realTime])
 
     const logout = () => {
         axios({
@@ -75,7 +75,8 @@ export default function VendorDashboard() {
             },
 
         }).then((res) => {
-            setMessage(true);
+            alert('Order confirmed');
+            setRealTime(!realTime);
         }).catch((err) => {
             console.log("error is=>", err);
         })
@@ -148,7 +149,7 @@ export default function VendorDashboard() {
                                                                             </ul>
                                                                         })
                                                                     }
-                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">{message === true ? "Order Confirmed" : "Confirm Order"}</button>
+                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">Confirm Order</button>
                                                                 </div>
                                                             </div>
                                                         )
@@ -166,15 +167,6 @@ export default function VendorDashboard() {
                     </div>
                 </main>
             </div>
-
-
-
-
-
-
-
-
-
         </div>
     )
 }
