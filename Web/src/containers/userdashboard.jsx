@@ -44,6 +44,7 @@ export default function UserDashboard() {
 
     var [cart, setCart] = useState([]);
     var [orderMessage, setMessage] = useState("Cart");
+
     var [products, setProducts] = useState([
         {
             product: 'Battery',
@@ -155,7 +156,7 @@ export default function UserDashboard() {
                     setCart([]);
                 });
 
-                // setCart(empty_cart);
+                products.map((value)=>value.added=false);
 
             }, (error) => {
                 console.log("an error occured");
