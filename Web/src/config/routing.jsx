@@ -18,13 +18,8 @@ export default function AppRouter() {
  
 
   return (
-    <div>
-      <div>
-        {JSON.stringify(globalState)};
-      </div>
+  
       <Router>
-
-
         {(globalState.loginStatus === false) ?
           <>
             <Route exact={true} path="/">
@@ -71,10 +66,7 @@ export default function AppRouter() {
             </Route>
           </>
           : null}
-
-
-
       </Router >
-    </div>
+      
   );
 }

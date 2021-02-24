@@ -22,25 +22,32 @@ import url from "../core";
 
 export default function VendorDashboard() {
 
-
     const globalState = useGlobalState();
     const updateGlobalState = useGlobalStateUpdate();
 
     const [orders, setOrders] = useState([]);
+    const [message, setMessage] = useState(false);
     useEffect(() => {
+        let arr = [];
         axios({
             method: 'get',
             url: `${url}/getOrders`,
         }).then((response) => {
 
-            setOrders(response.data.placedRequests)
+            response.data.placedRequests.map((value) => {
+                if (value.pending) {
+                    arr.push(value);
+                }
+            })
 
+            setOrders(arr);
+            console.log("orders are=>", orders);
         }, (error) => {
             console.log("an error occured");
         })
     }, [])
 
-    function logout() {
+    const logout = () => {
         axios({
             method: 'post',
             url: `${url}/logout`
@@ -48,12 +55,26 @@ export default function VendorDashboard() {
         }).then((response) => {
             alert(response.data);
             updateGlobalState((prevValue) => ({ ...prevValue, loginStatus: false, user: null, roll: null }));
-
         }, (error) => {
             console.log("error=>", error);
         })
     }
-    console.log("orders are => ", orders);
+    const confirmOrder = (index) => {
+        console.log(orders[index]._id)
+        axios({
+            method: 'patch',
+            url: `${url}/confirmOrder`,
+            data: {
+                id: orders[index]._id,
+            },
+
+        }).then((res) => {
+            setMessage(true);
+        }).catch((err) => {
+            console.log("error is=>", err);
+        })
+    }
+
     return (
         <div>
 
@@ -104,21 +125,32 @@ export default function VendorDashboard() {
                                             <div className="post-topbar">
 
                                             </div>
-                                            {
+                                            <div>
+                                                {
+                                                    orders.map(({ cart, userEmail, total }, index) => {
+                                                        return (
+                                                            <div key={index} className="card text-center" style={{ width: '18rem' }}>
+                                                                <div className="card-body">
+                                                                    <h5 className="card-title">From: {userEmail}</h5>
+                                                                    <h2>Total is {total}</h2>
+                                                                    {
+                                                                        cart.map((cartVal, i) => {
+                                                                            return <ul key={i}>
+                                                                                <li>
+                                                                                    {cartVal.product}
+                                                                                </li>
+                                                                            </ul>
+                                                                        })
+                                                                    }
+                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">{message === true ? "Order Confirmed" : "Confirm Order"}</button>
+                                                                </div>
+                                                            </div>
+                                                        )
 
-                                                orders.map((value, index) => {
-                                                    return <div key={index} className="card text-center" style={{ width: '18rem' }}>
-                                                        <div className="card-body">
-                                                            <h5 className="card-title">From: {value.userEmail}</h5>
-                                                            <p className="card-text">{value.Earpod > 0 ? 'Earpod ' + value.Earpod : ""}</p>
-                                                            <p className="card-text">{value.Charger > 0 ? 'Charger ' + value.Charger : ""}</p>
-                                                            <p className="card-text">{value.Battery > 0 ? 'Battery ' + value.Battery : ""}</p>
-                                                            <a href="#" className="btn btn-primary">Go somewhere</a>
-                                                        </div>
-                                                    </div>
-                                                })
+                                                    })
+                                                }
+                                            </div>
 
-                                            }
                                         </div>
                                     </div>
 

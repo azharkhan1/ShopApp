@@ -106,37 +106,23 @@ export default function UserDashboard() {
 
     }
     function checkOut() {
-        var data = {
-
-        }
+      
         var productTotal = 0;
         cart.map((value => {
             productTotal += value.price;
         }))
 
+        console.log("cart is=>",cart);
 
-
-        cart.map((values) => {
-            
-            var Battery = values.product === "Battery" ? values.quantity : 0;
-            var Charger = values.product === "Charger" ? values.quantity : 0;
-            var Earpod = values.product === "Earpod" ? values.quantity : 0;
-            if (Battery > 0) {
-                data.Battery = Battery;
-            }
-            if (Charger > 0) {
-                data.Charger = Charger;
-            }
-            if (Earpod) {
-                data.Earpod = Earpod;
-            }
-            console.log(data);
-        })
+  
         axios({
             method: 'post',
             url: `${url}/placeOrder`,
-            data: data,
-            total: productTotal,
+            data: {
+                cart:cart,
+                total: productTotal,
+            },
+           
         }).then((response) => {
             console.log("response is = > ", response.data);
             setMessage("Your order has been placed");

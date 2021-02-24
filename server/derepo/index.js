@@ -49,16 +49,6 @@ var userSchema = new mongoose.Schema({
 });
 var userModel = mongoose.model("users", userSchema);
 
-var vendorSchema = new mongoose.Schema({
-    vendorEmail: String,
-    vendorName: String,
-    vendorPassword: String,
-    vendorPhone: String,
-    vendorAddress: String,
-});
-
-var vendorModel = mongoose.model("vendors" , vendorSchema);
-
 
 
 var otpSchema = new mongoose.Schema({
@@ -69,11 +59,10 @@ var otpSchema = new mongoose.Schema({
 var otpModel = mongoose.model("otp", otpSchema);
 
 var collection = mongoose.Schema({
-    Earpod : String,
-    Battery : String,
-    Charger : String,
+    cart : Array,
     total : String,
     userEmail : String,
+    pending: Boolean,
     "createdOn" : { "type": Date, "default": Date.now },
 })
 
@@ -85,5 +74,4 @@ module.exports = {
     userModel: userModel,
     otpModel: otpModel,
     order : order,
-    vendorModel : vendorModel,
 }

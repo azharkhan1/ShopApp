@@ -13,11 +13,11 @@ var cookieParser = require("cookie-parser");
 var path = require("path");
 var socketIo = require("socket.io");
 var authRoutes = require("./routes/auth");
-var vendorRoute = require("./routes/vendorauth");
+
 var http = require("http");
 
 var { SERVER_SECRET, PORT } = require("./core");
-var { userModel, order, vendorModel } = require("./derepo");
+var { userModel, order } = require("./derepo");
 
 
 
@@ -49,11 +49,6 @@ app.use((req, res, next) => {
 
 app.use("/", express.static(path.resolve(path.join(__dirname, "../Web/build"))));
 
-
-
-
-
-app.use("/vendorauth", vendorRoute)
 app.use("/auth", authRoutes);
 
 
@@ -75,38 +70,20 @@ app.use(function (req, res, next) {
             }
 
             else { // issue new token
-                if (!decodedData.vendorEmaail) {
-                    var token = jwt.sign({
-                        id: decodedData.id,
-                        userName: decodedData.userName,
-                        userEmail: decodedData.userEmail,
-                        userPhone: decodedData.userPhone,
-                        userAddress: decodedData.userAddress,
-                    }, SERVER_SECRET)
-                    res.cookie('jToken', token, {
-                        maxAge: 86_400_000,
-                        httpOnly: true
-                    });
-                    req.body.jToken = decodedData;
-                    req.headers.jToken = decodedData;
-                    next();
-                }
-                else {
-                    var token = jwt.sign({
-                        id: decodedData.id,
-                        vendorName: decodedData.vendorName,
-                        vendorEmail: decodedData.vendorEmail,
-                        vendorPhone: decodedData.vendorPhone,
-                    }, SERVER_SECRET)
-
-                    res.cookie('jToken', token, {
-                        maxAge: 86_400_000,
-                        httpOnly: true
-                    });
-                    req.body.jToken = decodedData;
-                    req.headers.jToken = decodedData;
-                    next();
-                }
+                var token = jwt.sign({
+                    id: decodedData.id,
+                    userName: decodedData.userName,
+                    userEmail: decodedData.userEmail,
+                    userPhone: decodedData.userPhone,
+                    userAddress: decodedData.userAddress,
+                }, SERVER_SECRET)
+                res.cookie('jToken', token, {
+                    maxAge: 86_400_000,
+                    httpOnly: true
+                });
+                req.body.jToken = decodedData;
+                req.headers.jToken = decodedData;
+                next();
             }
 
         } else {
@@ -134,50 +111,34 @@ app.get("/profile", (req, res, next) => {
 
 app.post("/placeOrder", (req, res, next) => {
     console.log("req.body is = > ", req.body);
-    
-    if (req.body.Earpod || req.body.Charger || req.body.Battery) {
-        userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userFound) => {
-            if (!err) {
-                order.create({
-                    Earpod: req.body.Earpod,
-                    Charger: req.body.Charger,
-                    Battery: req.body.Battery,
-                    total: req.body.total,
-                    userEmail: req.body.jToken.userEmail,
-                    userName: req.body.jToken.userName,
-                }).then((orderPlaced) => {
-                    res.status(200).send({
-                        message: "Your request has been sent succesfully" + orderPlaced,
-                    });
-                    io.emit("requests", orderPlaced);
-                })
-                    .catch((err) => {
-                        res.status(500).send({
-                            message: "an error occured"
-                        })
+
+
+    userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userFound) => {
+        if (!err) {
+            order.create({
+                cart: req.body.cart,
+                total: req.body.total,
+                userEmail: req.body.jToken.userEmail,
+                userName: req.body.jToken.userName,
+                pending: true,
+            }).then((orderPlaced) => {
+                res.status(200).send({
+                    message: "Your request has been sent succesfully" + orderPlaced,
+                });
+                io.emit("requests", orderPlaced);
+            })
+                .catch((err) => {
+                    res.status(500).send({
+                        message: "an error occured"
                     })
-            }
-        })
-    }
-    else {
-        res.status(404).send(
-            `
-            Please send one of the following in json body:
-            e.g
-            {
-                earpod : "xxkg",
-                battery : "xx"kg"
-            }
-         `
-        )
-    }
+                })
+        }
+    })
 
 });
 
 app.get("/getOrders", (req, res, next) => {
-
-
-    order.find({} , (err, data) => {
+    order.find({}, (err, data) => {
         if (!err) {
             res.status(200).send({
                 placedRequests: data,
@@ -188,10 +149,46 @@ app.get("/getOrders", (req, res, next) => {
             res.status(500).send("error");
         }
     })
-
-
-
 });
+
+app.patch('/confirmOrder', (req, res, next) => {
+    var { id } = req.body;
+    userModel.find({ userEmail: req.body.jToken.userEmail }, (err, user) => {
+        if (!err) {
+            order.findById({ _id: id }, (err, data) => {
+                if (data) {
+                    console.log("Data ", data);
+                    data.updateOne({pending: false} , {} , (err,updated)=>{
+                        if(updated){
+                            res.status(200).send({
+                                message: "order updated"
+                            })
+                        }
+                        else{
+                            res.status(501).send({
+                                message : "server error",
+                            })
+                        }
+                    })
+                }
+                else {
+                    res.status(403).send({
+                        message: "Could not find the order"
+                    })
+                }
+            })
+        }
+        else {
+            res.status(501).send({
+                message : "user could not be found",
+            })
+        }
+    })
+})
+
+
+
+
 app.post("/logout", (req, res, next) => {
     res.cookie('jToken', "", {
         maxAge: 86_400_000,
