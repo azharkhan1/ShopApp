@@ -16,6 +16,8 @@ import "./css/dashboard.css";
 // import global state
 import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
 
+// import socket
+import socket from "../config/socket";
 
 axios.defaults.withCredentials = true
 
@@ -56,6 +58,8 @@ export default function UserDashboard() {
         },
 
     ])
+
+
 
     function addCart(value, index) {
         var products_change = [...products];

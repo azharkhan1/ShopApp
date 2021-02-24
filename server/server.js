@@ -22,27 +22,31 @@ var { userModel, order } = require("./derepo");
 
 
 
+
+
+
 var app = express();
 var server = http.createServer(app);
 var io = socketIo(server);
+
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
 }));
 
 app.use(cookieParser());
 
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin: http://localhost:3000");
-    res.header("Access-Control-Allow-Credentials: true");
-    res.header("Access-Control-Allow-Methods: GET, POST");
-    res.header("Access-Control-Allow-Headers: Content-Type, *");
-    next();
-})
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin: http://localhost:3000");
+//     res.header("Access-Control-Allow-Credentials: true");
+//     res.header("Access-Control-Allow-Methods: GET, POST");
+//     res.header("Access-Control-Allow-Headers: Content-Type, *");
+//     next();
+// })
 
 
 
@@ -51,7 +55,9 @@ app.use("/", express.static(path.resolve(path.join(__dirname, "../Web/build"))))
 
 app.use("/auth", authRoutes);
 
-
+// io.on('connection', (user) => {
+//     console.log('user connected', user);
+// })
 
 app.use(function (req, res, next) {
     if (!req.cookies.jToken) {
@@ -158,15 +164,15 @@ app.patch('/confirmOrder', (req, res, next) => {
             order.findById({ _id: id }, (err, data) => {
                 if (data) {
                     console.log("Data ", data);
-                    data.updateOne({pending: false} , {} , (err,updated)=>{
-                        if(updated){
+                    data.updateOne({ pending: false }, {}, (err, updated) => {
+                        if (updated) {
                             res.status(200).send({
                                 message: "order updated"
                             })
                         }
-                        else{
+                        else {
                             res.status(501).send({
-                                message : "server error",
+                                message: "server error",
                             })
                         }
                     })
@@ -180,7 +186,7 @@ app.patch('/confirmOrder', (req, res, next) => {
         }
         else {
             res.status(501).send({
-                message : "user could not be found",
+                message: "user could not be found",
             })
         }
     })

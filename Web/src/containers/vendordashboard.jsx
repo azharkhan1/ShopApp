@@ -17,16 +17,18 @@ import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
 // importing url 
 import url from "../core";
 
-
+// import socket
+import socket from "../config/socket";
 
 
 export default function VendorDashboard() {
-
+  
     const globalState = useGlobalState();
     const updateGlobalState = useGlobalStateUpdate();
 
     const [orders, setOrders] = useState([]);
     const [message, setMessage] = useState(false);
+    const [realTime , setRealTime] = useState(false);
     useEffect(() => {
         let arr = [];
         axios({
@@ -44,6 +46,10 @@ export default function VendorDashboard() {
             console.log("orders are=>", orders);
         }, (error) => {
             console.log("an error occured");
+        })
+      
+        socket.on('requests' ,(data)=>{
+            setRealTime(!realTime);
         })
     }, [])
 
