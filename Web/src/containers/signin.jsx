@@ -17,7 +17,8 @@ function Signin() {
     
     const globalState = useGlobalState();
     const setGlobalState = useGlobalStateUpdate()
-    var history = useHistory();
+    var [loginResponse , setLoginResponse] = useState();
+ 
 
 
     var email = useRef();
@@ -34,12 +35,16 @@ function Signin() {
                 userPassword: password.current.value,
             },
         }).then((response) => {
-            setGlobalState((prevValue) => ({...prevValue , loginStatus : true }));
+            console.log("response is = > " ,response.data);
+            setGlobalState((prevValue) => ({...prevValue , loginStatus : true , user : {
+                userEmail : response.data.user.userEmail,
+                userName : response.data.user.userName,
+            } }));
             alert(response.data.message);
-            history.push("/dashboard");
         }, (error) => {
-            // alert(error.response.data.message);
+            setLoginResponse(error.response.data.message);
             console.log("an error occured");
+            
         })
     }
 
@@ -75,7 +80,7 @@ function Signin() {
                                                 <i className="fa fa-long-arrow-left"></i>
 
                                                 <ul>
-                                                    <li data-tab="tab-3" className="current"><Link to="/"> User </Link></li>
+                                                    <li data-tab="tab-3" className="current">{loginResponse}</li>
                                                     {/* <li data-tab="tab-4"><a href="#" title="">Company</a></li> */}
                                                     {/* <li >   <Link to="/vendorsignin"> Company </Link> </li> */}
 

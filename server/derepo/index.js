@@ -68,19 +68,21 @@ var otpSchema = new mongoose.Schema({
 var otpModel = mongoose.model("otp", otpSchema);
 
 var collection = mongoose.Schema({
-    cardBoard : String,
-    plastic : String,
+    Earpod : String,
+    Battery : String,
+    Charger : String,
+    total : String,
     userEmail : String,
     "createdOn" : { "type": Date, "default": Date.now },
 })
 
-var placedCollectionModel = mongoose.model("tweets",collection);
+var order = mongoose.model("order",collection);
 
 
 
 module.exports = {
     userModel: userModel,
     otpModel: otpModel,
-    placedCollectionModel : placedCollectionModel,
+    order : order,
     vendorModel : vendorModel,
 }

@@ -2,10 +2,8 @@ var express = require("express");
 var bcrypt = require("bcrypt-inzi");
 var postmark = require("postmark");
 var jwt = require("jsonwebtoken");
-
 var { SERVER_SECRET, POSTSECRET } = require("../core");
 var { userModel, otpModel } = require("../derepo");
-
 var api = express.Router();
 var client = new postmark.Client(POSTSECRET);
 
@@ -262,11 +260,7 @@ api.post("/forget-password-step-2", (req, res, next) => {
 });
 
 
-
-
-
 module.exports = api;
-
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 };

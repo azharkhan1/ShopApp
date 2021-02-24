@@ -17,7 +17,7 @@ var vendorRoute = require("./routes/vendorauth");
 var http = require("http");
 
 var { SERVER_SECRET, PORT } = require("./core");
-var { userModel, placedCollectionModel, vendorModel } = require("./derepo");
+var { userModel, order, vendorModel } = require("./derepo");
 
 
 
@@ -72,6 +72,7 @@ app.use(function (req, res, next) {
 
             if (diff > 3000000) { // expire after 5 min (in milis)
                 res.status(401).send("token expired")
+                res.clearCookie();
             }
 
             else { // issue new token
@@ -143,18 +144,20 @@ app.get("/vendorProfile", (req, res, next) => {
                     message: "server error"
                 })
             }
-
         })
 });
 
-app.post("/schdeduleMaterial", (req, res, next) => {
+app.post("/placeOrder", (req, res, next) => {
+    console.log("req.body is = > " ,req.body);
 
-    if (req.body.cardBoard || req.body.plastic) {
+    if (req.body.Earpod || req.body.Charger ||  req.body.Battery  ) {
         userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userFound) => {
             if (!err) {
-                placedCollectionModel.create({
-                    cardBoard: req.body.cardBoard,
-                    plastic: req.body.plastic,
+                order.create({
+                    Earpod: req.body.earpod,
+                    Charger: req.body.charger,
+                    Battery: req.body.battery,
+                    total : req.body.total,
                     userEmail: req.body.jToken.userEmail,
                     userName: req.body.jToken.userName,
                 }).then((orderPlaced) => {
@@ -177,8 +180,8 @@ app.post("/schdeduleMaterial", (req, res, next) => {
             Please send one of the following in json body:
             e.g
             {
-                plastic : "xxkg",
-                cardBoard : "xx"kg"
+                earpod : "xxkg",
+                battery : "xx"kg"
             }
          `
         )
@@ -190,7 +193,7 @@ app.get("/myRequests", (req, res, next) => {
 
     userModel.findOne({ userEmail: req.body.jToken.userEmail }, (err, userData) => {
         if (!err) {
-            placedCollectionModel.find({ userEmail: req.body.jToken.userEmail }, (err, data) => {
+            order.find({ userEmail: req.body.jToken.userEmail }, (err, data) => {
                 if (!err) {
                     res.status(200).send({
                         placedRequests: data,

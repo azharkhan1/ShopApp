@@ -12,8 +12,8 @@ import './css/line-awesome-font-awesome.min.css'
 import './css/jquery.mCustomScrollbar.min.css'
 import './css/flatpickr.min.css'
 import product from "./images/product.png";
-
 import "./css/dashboard.css";
+axios.defaults.withCredentials = true
 
 
 
@@ -34,14 +34,16 @@ import "./css/dashboard.css";
 // }
 
 
-axios.defaults.withCredentials = true
+
+
 
 
 export default function UserDashboard() {
 
-    // var [loggedOut, setLogout] = useState(true);
+
+
     var [cart, setCart] = useState([]);
-    var [total, setTotal] = useState(0);
+    var [orderMessage, setMessage] = useState("Cart");
     var [products, setProducts] = useState([
         {
             product: 'Battery',
@@ -64,19 +66,7 @@ export default function UserDashboard() {
 
     ])
 
-    function getTotal() {
 
-        var productTotal = 0;
-        cart.map((value => {
-            console.log("type of price is =>", typeof (value.price))
-            productTotal += value.price;
-        }))
-        setTimeout(() => {
-            setTotal(productTotal);
-            alert("your total is = > " + productTotal);
-        }, 1000)
-
-    }
 
     function addCart(value, index) {
         var products_change = [...products];
@@ -89,8 +79,9 @@ export default function UserDashboard() {
             quantity: 1,
             productPrice: value.price,
         }
-        console.log("total is = >  ", total);
+
         setCart([...cart, valueToAdd]);
+        setMessage("Cart");
 
     }
     function addQty(index) {
@@ -100,15 +91,13 @@ export default function UserDashboard() {
         setCart(prevCart);
 
     }
-    function removeQty(index) {
 
+    function removeQty(index) {
         if (cart[index].quantity > 1) {
             var prevCart = [...cart];
             prevCart[index].quantity -= 1;
             prevCart[index].price = prevCart[index].quantity * prevCart[index].productPrice;
             setCart(prevCart);
-
-
         }
         else {
             for (let i = 0; i < products.length; i++) {
@@ -127,6 +116,57 @@ export default function UserDashboard() {
         }
 
     }
+    function checkOut() {
+        var data = {
+
+        }
+        var productTotal = 0;
+        cart.map((value => {
+            productTotal += value.price;
+        }))
+
+
+
+        cart.map((values) => {
+
+            var Battery = values.product === "Battery" ? values.quantity : 0;
+            var Charger = values.product === "Charger" ? values.quantity : 0;
+            var Earpod = values.product === "Earpod" ? values.quantity : 0;
+            if (Battery > 0) {
+                data.Battery = Battery;
+            }
+            if (Charger > 0) {
+                data.Charger = Charger;
+            }
+            if (Earpod) {
+                data.Earpod = Earpod;
+            }
+            console.log(data);
+            axios({
+                method: 'post',
+                url: `${url}/placeOrder`,
+                data: data,
+                total: productTotal,
+            }).then((response) => {
+                console.log("response is = > ", response.data);
+                setMessage("Your order has been placed");
+                cart.map((value) => {
+                    value.quantity = 0
+                    setCart([]);
+                });
+
+                // setCart(empty_cart);
+
+            }, (error) => {
+                console.log("an error occured");
+            })
+        })
+        console.log("cart is = > ", cart);
+
+    }
+
+
+
 
     return (
         <div>
@@ -200,7 +240,7 @@ export default function UserDashboard() {
                                         <div className="right-sidebar">
                                             <div className="widget widget-about">
                                                 <img src="images/wd-logo.png" alt="" />
-                                                <h3>Cart</h3>
+                                                <h3>{orderMessage}</h3>
                                                 <div className="sign_link">
                                                     {
                                                         cart.map((value, index) => {
@@ -221,7 +261,7 @@ export default function UserDashboard() {
                                                     }
 
                                                 </div>
-                                                <button onClick={getTotal}>Checkout</button>
+                                                <button onClick={cart.length > 0 ? () => checkOut() : () => { return null }}>{cart.length > 0 ? "Checkout" : "Add Something to checkout"}</button>
 
                                             </div>
                                             <hr />

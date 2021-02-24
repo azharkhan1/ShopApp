@@ -19,23 +19,14 @@ export default function AppRouter() {
   const globalState = useGlobalState()
 
   // console.log("user is = > ", globalState.user);
-  
+
   return (
     <div>
       <div>
         {JSON.stringify(globalState)};
       </div>
       <Router>
-        {
-          globalState.user === null ? <Route exact path="/"> <Signin /> </Route>
-            : <Route path="/" component={Dashboard} />
-        }
-        <Route path="/signup">
-          <Signup />
-        </Route>
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
+      
 
         {(globalState.loginStatus === false) ?
           <>
