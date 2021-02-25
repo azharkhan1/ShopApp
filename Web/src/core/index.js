@@ -1,6 +1,13 @@
+var url = window.location.href.split(":");
 
-var url = "https://shopappnavtc.herokuapp.com"
-// var url = "http://localhost:5000"
+if (url[0]==="https")
+{
+    url = "https://shopappnavtc.herokuapp.com/"
+}
+else{
+    url = "http://localhost:5000"
+}
+
 
 
 export default url;
