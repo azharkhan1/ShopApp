@@ -1,5 +1,6 @@
 import {
   BrowserRouter as Router,
+  HashRouter,
   Route,
   Link,
   Redirect,
@@ -26,7 +27,7 @@ export default function AppRouter() {
    
    
 
-      <Router>
+      <HashRouter>
         {(globalState.loginStatus === false) ?
           <>
             <Route exact={true} path="/">
@@ -73,7 +74,7 @@ export default function AppRouter() {
             </Route>
           </>
           : null}
-      </Router >
+      </HashRouter >
       
   );
 }

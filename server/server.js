@@ -21,13 +21,15 @@ var { userModel, order } = require("./derepo");
 
 var app = express();
 var server = http.createServer(app);
-var io = socketIo(server);
+var io = socketIo(server, { 
+    cors : ["http://localhost:3000",'https://shopappnavtc.herokuapp.com/']
+ });
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: "*",
+    origin: ["http://localhost:3000",'https://shopappnavtc.herokuapp.com/'],
     credentials: true,
 }));
 
@@ -55,7 +57,7 @@ app.use("/auth", authRoutes);
 
 app.use(function (req, res, next) {
     if (!req.cookies.jToken) {
-        res.redirect("https://shopappnavtc.herokuapp.com/")
+        // res.redirect("https://shopappnavtc.herokuapp.com/")
         // res.status(401).send("include http-only credentials with every request")
         return;
     }
