@@ -20,6 +20,9 @@ import url from "../core";
 // import socket
 import socket from "../config/socket";
 
+//import components
+import Header from '../components/header';
+
 
 export default function VendorDashboard() {
 
@@ -86,26 +89,7 @@ export default function VendorDashboard() {
         <div>
 
             <div className="wrapper">
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                    <a className="navbar-brand" href="#">Navbar w/ text</a>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon" />
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarText">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
-                            </li>
-                        </ul>
-                        <span className="navbar-text" onClick={logout}>
-                            <a href="#" className="nav-link logout" title="">
-                                <span><i className="fa fa-sign-out" aria-hidden="true"></i></span>
-                                        Logout
-                                    </a>
-                        </span>
-                    </div>
-                </nav>
-
+                <Header userName={globalState.user.userName} />
                 <main>
                     <div className="main-section">
                         <div className="container">
@@ -134,11 +118,13 @@ export default function VendorDashboard() {
                                             </div>
                                             <div>
                                                 {
-                                                    orders.map(({ cart, userEmail, total }, index) => {
+                                                    orders.reverse().map(({ cart, userEmail, total, phoneNo, address }, index) => {
                                                         return (
                                                             <div key={index} className="card text-center" style={{ width: '18rem' }}>
                                                                 <div className="card-body">
-                                                                    <h5 className="card-title">From: {userEmail}</h5>
+                                                                    <h5 className="card-title">{userEmail}</h5>
+                                                                    <h4 className="card-title">{phoneNo}</h4>
+                                                                    <h4 className="card-title">{address}</h4>
                                                                     <h2>Total is {total}</h2>
                                                                     {
                                                                         cart.map((cartVal, i) => {

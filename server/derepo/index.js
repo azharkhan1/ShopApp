@@ -63,6 +63,8 @@ var collection = mongoose.Schema({
     total : String,
     userEmail : String,
     pending: Boolean,
+    phoneNo : String,
+    address : String,
     "createdOn" : { "type": Date, "default": Date.now },
 })
 

@@ -21,28 +21,21 @@ var { userModel, order } = require("./derepo");
 
 var app = express();
 var server = http.createServer(app);
-var io = socketIo(server, { 
-    cors : ["http://localhost:3000",'https://shopappnavtc.herokuapp.com/']
- });
+var io = socketIo(server, {
+    cors: ["http://localhost:3000", 'https://shopappnavtc.herokuapp.com/']
+});
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: ["http://localhost:3000",'https://shopappnavtc.herokuapp.com/'],
+    origin: ["http://localhost:3000", 'https://shopappnavtc.herokuapp.com/'],
     credentials: true,
 }));
 
 app.use(cookieParser());
 
 
-// app.use((req, res, next) => {
-//     res.header("Access-Control-Allow-Origin: http://localhost:3000");
-//     res.header("Access-Control-Allow-Credentials: true");
-//     res.header("Access-Control-Allow-Methods: GET, POST");
-//     res.header("Access-Control-Allow-Headers: Content-Type, *");
-//     next();
-// })
 
 
 
@@ -79,7 +72,7 @@ app.use(function (req, res, next) {
                     userEmail: decodedData.userEmail,
                     userPhone: decodedData.userPhone,
                     userAddress: decodedData.userAddress,
-                    roll : decodedData.roll,
+                    roll: decodedData.roll,
                 }, SERVER_SECRET)
                 res.cookie('jToken', token, {
                     maxAge: 86_400_000,
@@ -124,6 +117,8 @@ app.post("/placeOrder", (req, res, next) => {
                 total: req.body.total,
                 userEmail: req.body.jToken.userEmail,
                 userName: req.body.jToken.userName,
+                phoneNo: req.body.phoneNo,
+                address: req.body.address,
                 pending: true,
             }).then((orderPlaced) => {
                 res.status(200).send({
@@ -199,9 +194,7 @@ app.post("/logout", (req, res, next) => {
         httpOnly: true
     });
     res.clearCookie();
-
     res.send("logout succesfully");
-
 })
 
 

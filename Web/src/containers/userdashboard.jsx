@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import url from "../core/index";
 import "./css/app.css";
@@ -16,8 +16,9 @@ import "./css/dashboard.css";
 // import global state
 import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
 
-// import socket
-import socket from "../config/socket";
+// importing components
+import Header from '../components/header'
+
 
 axios.defaults.withCredentials = true
 
@@ -31,12 +32,12 @@ axios.defaults.withCredentials = true
 
 export default function UserDashboard() {
 
-
     const globalState = useGlobalState();
-    const updateGlobalState = useGlobalStateUpdate();
+
     var [cart, setCart] = useState([]);
     var [orderMessage, setMessage] = useState("Cart");
-
+    var address = useRef();
+    var phoneNo = useRef();
     var [products, setProducts] = useState([
         {
             product: 'Battery',
@@ -109,24 +110,26 @@ export default function UserDashboard() {
         }
 
     }
-    function checkOut() {
-      
+    function checkOut(e) {
+        e.preventDefault();
         var productTotal = 0;
         cart.map((value => {
             productTotal += value.price;
         }))
 
-        console.log("cart is=>",cart);
+        console.log("cart is=>", cart);
 
-  
+
         axios({
             method: 'post',
             url: `${url}/placeOrder`,
             data: {
-                cart:cart,
+                cart: cart,
                 total: productTotal,
+                address: address.current.value,
+                phoneNo: phoneNo.current.value,
             },
-           
+
         }).then((response) => {
             console.log("response is = > ", response.data);
             setMessage("Your order has been placed");
@@ -134,49 +137,19 @@ export default function UserDashboard() {
                 value.quantity = 0
                 setCart([]);
             });
+
         }, (error) => {
             console.log("an error occured");
         })
         products.map((value) => value.added = false);
     }
 
-    function logout() {
-        axios({
-            method: 'post',
-            url: `${url}/logout`
-
-        }).then((response) => {
-            alert(response.data);
-            updateGlobalState((prevValue) => ({ ...prevValue, loginStatus: false, user: null, roll: null }));
-
-        }, (error) => {
-            console.log("error=>", error);
-        })
-    }
-
+  
 
     return (
         <div>
             <div className="wrapper">
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                    <a className="navbar-brand" href="#">{globalState.user.userEmail}</a>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon" />
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarText">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
-                            </li>
-                        </ul>
-                        <span className="navbar-text" onClick={logout}>
-                            <a href="#" className="nav-link logout" title="">
-                                <span><i className="fa fa-sign-out" aria-hidden="true"></i></span>
-                                        Logout
-                                    </a>
-                        </span>
-                    </div>
-                </nav>
+                <Header userEmail={globalState.user.userName}/>
                 <main>
                     <div className="main-section">
                         <div className="container">
@@ -185,17 +158,7 @@ export default function UserDashboard() {
 
                                     <div className="col-lg-9 col-md-8 no-pd">
                                         <div className="main-ws-sec">
-                                            {/* <div className="post-topbar">
-                                                <div className="user-picy">
-                                                    <img src="images/resources/user-pic.png" alt="" />
-                                                </div>
-                                                <div className="post-st">
-                                                    <ul>
-                                                        <li><a className="post_project" href="#" title="">Post a Item Name</a></li>
-                                                        <li><a className="post-jb active" href="#" title="">Post Weight</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div> */}
+                                       
                                             <div className="posts-section">
                                                 {/* <div className="post-bar">
                                                 </div> */}
@@ -267,30 +230,41 @@ export default function UserDashboard() {
                                                     }
 
                                                 </div>
-                                                <button onClick={cart.length > 0 ? () => checkOut() : () => { return null }}>{cart.length > 0 ? "Checkout" : "Add Something to checkout"}</button>
-
                                             </div>
                                             <hr />
-
-
                                         </div>
+                                        {
+                                            cart.length > 0
+                                                ?
 
-                                        <div className="tags-sec full-width">
-                                            <ul>
-                                                <li><a href="#" title="">Help Center</a></li>
-                                                <li><a href="#" title="">About</a></li>
-                                                <li><a href="#" title="">Privacy Policy</a></li>
-                                                <li><a href="#" title="">Community Guidelines</a></li>
-                                                <li><a href="#" title="">Cookies Policy</a></li>
-                                                <li><a href="#" title="">Career</a></li>
-                                                <li><a href="#" title="">Language</a></li>
-                                                <li><a href="#" title="">Copyright Policy</a></li>
-                                            </ul>
-                                            <div className="cp-sec">
-                                                <img src="images/logo2.png" alt="" />
-                                                <p><img src="images/cp.png" alt="" />Copyright 2021</p>
-                                            </div>
-                                        </div>
+                                                <form onSubmit={cart.length > 0 ? (e) => checkOut(e) : () => { return }}>
+                                                    <div className="form-row align-items-center">
+                                                        <div className="col-auto">
+                                                            <label className="sr-only" >Phone Number</label>
+                                                            <input required type="text" className="form-control mb-2"
+                                                                placeholder="Enter Phone Number"
+                                                                ref={phoneNo}
+                                                            />
+                                                        </div>
+                                                        <div className="col-auto">
+                                                            <label className="sr-only" htmlFor="inlineFormInputGroup">Address</label>
+                                                            <div className="input-group mb-2">
+                                                                <div className="input-group-prepend">
+                                                                    <div className="input-group-text">@</div>
+                                                                </div>
+                                                                <input required type="text" className="form-control" id="inlineFormInputGroup"
+                                                                    placeholder="Delivery Address"
+                                                                    ref={address}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-auto mx-auto">
+                                                            <button class='cart-btn' >{cart.length > 0 ? "Checkout" : "Add Something to checkout"}</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                : ''
+                                        }
                                     </div>
                                 </div>
                             </div>
