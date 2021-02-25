@@ -27,9 +27,6 @@ export default function AppRouter() {
    
 
       <Router>
-        <div>
-        {"===>" + JSON.stringify(globalState)}
-        </div>
         {(globalState.loginStatus === false) ?
           <>
             <Route exact={true} path="/">
