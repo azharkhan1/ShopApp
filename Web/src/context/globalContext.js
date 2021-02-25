@@ -23,7 +23,6 @@ export function GlobalStateProvider({ children }) {
         axios({
             method: 'get',
             url: url + "/profile",
-            withCredentials: true,
         }).then((response) => {
                 setData(prev => ({ ...prev, loginStatus: true , user : response.data.profile , roll : response.data.profile.roll }));
         }, (error) => {

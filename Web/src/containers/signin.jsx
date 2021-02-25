@@ -9,7 +9,6 @@ import url from "../core/index";
 import axios from "axios";
 import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext"
 
-axios.defaults.withCredentials = true
 
 
 
