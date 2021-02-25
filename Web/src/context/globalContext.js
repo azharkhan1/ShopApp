@@ -20,6 +20,7 @@ export function GlobalStateProvider({ children }) {
 
 
     useEffect(() => {
+        console.log('url is=> ' ,url);
         axios({
             method: 'get',
             url: url + "/profile",
