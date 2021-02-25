@@ -39,7 +39,6 @@ function Signin() {
             setGlobalState(prev => ({ ...prev, loginStatus: true , user : {
                 userEmail : response.data.user.userEmail,
                 userName : response.data.user.userName,
-        
             } , roll : response.data.user.roll }));
             alert(response.data.message);
         }, (error) => {
