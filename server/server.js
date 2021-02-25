@@ -76,6 +76,7 @@ app.use(function (req, res, next) {
                     userEmail: decodedData.userEmail,
                     userPhone: decodedData.userPhone,
                     userAddress: decodedData.userAddress,
+                    roll : decodedData.roll,
                 }, SERVER_SECRET)
                 res.cookie('jToken', token, {
                     maxAge: 86_400_000,

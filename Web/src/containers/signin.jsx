@@ -4,7 +4,7 @@ import "./css/app.css";
 import './css/line-awesome.css'
 import './css/style.css'
 import './css/responsive.css'
-import { Link, Redirect , useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import url from "../core/index";
 import axios from "axios";
 import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext"
@@ -14,17 +14,17 @@ axios.defaults.withCredentials = true
 
 
 function Signin() {
-    
+
     const globalState = useGlobalState();
     const setGlobalState = useGlobalStateUpdate()
-    var [loginResponse , setLoginResponse] = useState();
- 
+    var [loginResponse, setLoginResponse] = useState();
+
 
 
     var email = useRef();
     var password = useRef();
 
-   
+
     function login(e) {
         e.preventDefault();
         axios({
@@ -35,16 +35,17 @@ function Signin() {
                 userPassword: password.current.value,
             },
         }).then((response) => {
-            console.log("response is = > " ,response.data);
-            setGlobalState((prevValue) => ({...prevValue , loginStatus : true , user : {
+            console.log("response is = > ", response.data);
+            setGlobalState(prev => ({ ...prev, loginStatus: true , user : {
                 userEmail : response.data.user.userEmail,
                 userName : response.data.user.userName,
-            } }));
+        
+            } , roll : response.data.user.roll }));
             alert(response.data.message);
         }, (error) => {
             setLoginResponse(error.response.data.message);
             console.log("an error occured");
-            
+
         })
     }
 
@@ -61,7 +62,7 @@ function Signin() {
                                             <img src="" alt="" />
                                             <p> We Deal in electronic items
                                                    </p>
-                                        <img src={hamaraImage} alt="" />
+                                            <img src={hamaraImage} alt="" />
                                         </div>
                                     </div>
                                 </div>
@@ -104,11 +105,11 @@ function Signin() {
                                                     <div className="col-lg-12 no-pdd">
                                                         <div className="checky-sec">
                                                             <div className="fgt-sec">
-                                                        
+
                                                                 <label >
                                                                     <span></span>
                                                                 </label>
-                                                              <Link to='/forget-password'><small>Forgot password?</small></Link>  
+                                                                <Link to='/forget-password'><small>Forgot password?</small></Link>
                                                             </div>
                                                             {/* <a href="#" title="">Forgot Password?</a> */}
                                                         </div>

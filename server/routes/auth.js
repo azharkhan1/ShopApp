@@ -111,6 +111,7 @@ api.post("/login", (req, res, next) => {
                         user: {
                             userEmail: user.userEmail,
                             userName: user.userName,
+                            roll : user.roll
                         },
                         token: token,
                     })

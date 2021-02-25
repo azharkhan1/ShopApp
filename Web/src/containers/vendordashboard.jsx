@@ -22,13 +22,13 @@ import socket from "../config/socket";
 
 
 export default function VendorDashboard() {
-  
-    console.log('socket is=>',socket);
+
+    console.log('socket is=>', socket);
     const globalState = useGlobalState();
     const updateGlobalState = useGlobalStateUpdate();
 
     const [orders, setOrders] = useState([]);
-    const [realTime , setRealTime] = useState(false);
+    const [realTime, setRealTime] = useState(false);
     useEffect(() => {
         let arr = [];
         axios({
@@ -47,8 +47,8 @@ export default function VendorDashboard() {
         }, (error) => {
             console.log("an error occured");
         })
-      
-        socket.on('requests' ,(data)=>{
+
+        socket.on('requests', (data) => {
             setRealTime(!realTime);
         })
     }, [realTime])
