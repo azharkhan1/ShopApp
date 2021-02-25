@@ -144,7 +144,7 @@ export default function VendorDashboard() {
                                                                         cart.map((cartVal, i) => {
                                                                             return <ul key={i}>
                                                                                 <li>
-                                                                                    {cartVal.product}
+                                                                                    <p>{cartVal.product} Price <b>{cartVal.productPrice} x {cartVal.quantity}</b></p>
                                                                                 </li>
                                                                             </ul>
                                                                         })
