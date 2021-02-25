@@ -14,11 +14,6 @@ var { SERVER_SECRET, PORT } = require("./core");
 var { userModel, order } = require("./derepo");
 
 
-
-
-
-
-
 var app = express();
 var server = http.createServer(app);
 var io = socketIo(server, {
@@ -120,6 +115,7 @@ app.post("/placeOrder", (req, res, next) => {
                 phoneNo: req.body.phoneNo,
                 address: req.body.address,
                 pending: true,
+                remarks : req.body.remarks ? req.body.remarks : null,
             }).then((orderPlaced) => {
                 res.status(200).send({
                     message: "Your request has been sent succesfully" + orderPlaced,

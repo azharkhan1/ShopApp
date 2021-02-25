@@ -38,6 +38,7 @@ export default function UserDashboard() {
     var [orderMessage, setMessage] = useState("Cart");
     var address = useRef();
     var phoneNo = useRef();
+    var remarks = useRef();
     var [products, setProducts] = useState([
         {
             product: 'Battery',
@@ -128,6 +129,7 @@ export default function UserDashboard() {
                 total: productTotal,
                 address: address.current.value,
                 phoneNo: phoneNo.current.value,
+                remarks : remarks.current.value,
             },
 
         }).then((response) => {
@@ -144,12 +146,12 @@ export default function UserDashboard() {
         products.map((value) => value.added = false);
     }
 
-  
+
 
     return (
         <div>
             <div className="wrapper">
-                <Header userEmail={globalState.user.userName}/>
+                <Header userEmail={globalState.user.userName} />
                 <main>
                     <div className="main-section">
                         <div className="container">
@@ -158,7 +160,7 @@ export default function UserDashboard() {
 
                                     <div className="col-lg-9 col-md-8 no-pd">
                                         <div className="main-ws-sec">
-                                       
+
                                             <div className="posts-section">
                                                 {/* <div className="post-bar">
                                                 </div> */}
@@ -249,14 +251,19 @@ export default function UserDashboard() {
                                                         <div className="col-auto">
                                                             <label className="sr-only" htmlFor="inlineFormInputGroup">Address</label>
                                                             <div className="input-group mb-2">
-                                                                <div className="input-group-prepend">
-                                                                    <div className="input-group-text">@</div>
-                                                                </div>
+                                                    
                                                                 <input required type="text" className="form-control" id="inlineFormInputGroup"
                                                                     placeholder="Delivery Address"
                                                                     ref={address}
                                                                 />
                                                             </div>
+                                                        </div>
+                                                        <div className="col-auto mx-auto">
+                                                            <textarea
+                                                                placeholder='Enter remarks'
+                                                                rows="4" cols="50"
+                                                                ref={remarks}
+                                                            />
                                                         </div>
                                                         <div className="col-auto mx-auto">
                                                             <button class='cart-btn' >{cart.length > 0 ? "Checkout" : "Add Something to checkout"}</button>

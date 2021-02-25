@@ -28,8 +28,6 @@ export default function VendorDashboard() {
 
     console.log('socket is=>', socket);
     const globalState = useGlobalState();
-    const updateGlobalState = useGlobalStateUpdate();
-
     const [orders, setOrders] = useState([]);
     const [realTime, setRealTime] = useState(false);
     useEffect(() => {
@@ -43,6 +41,7 @@ export default function VendorDashboard() {
                 if (value.pending) {
                     arr.push(value);
                 }
+                console.log('value is=>',value);
             })
 
             setOrders(arr);
@@ -56,18 +55,7 @@ export default function VendorDashboard() {
         })
     }, [realTime])
 
-    const logout = () => {
-        axios({
-            method: 'post',
-            url: `${url}/logout`
-
-        }).then((response) => {
-            alert(response.data);
-            updateGlobalState((prevValue) => ({ ...prevValue, loginStatus: false, user: null, roll: null }));
-        }, (error) => {
-            console.log("error=>", error);
-        })
-    }
+  
     const confirmOrder = (index) => {
         console.log(orders[index]._id)
         axios({
@@ -87,9 +75,8 @@ export default function VendorDashboard() {
 
     return (
         <div>
-
             <div className="wrapper">
-                <Header userName={globalState.user.userName} />
+                <Header userName={globalState.user.userName}/>
                 <main>
                     <div className="main-section">
                         <div className="container">
@@ -118,7 +105,7 @@ export default function VendorDashboard() {
                                             </div>
                                             <div>
                                                 {
-                                                    orders.reverse().map(({ cart, userEmail, total, phoneNo, address }, index) => {
+                                                    orders.reverse().map(({ cart, userEmail, total, phoneNo, address , remarks }, index) => {
                                                         return (
                                                             <div key={index} className="card text-center" style={{ width: '18rem' }}>
                                                                 <div className="card-body">
@@ -131,11 +118,12 @@ export default function VendorDashboard() {
                                                                             return <ul key={i}>
                                                                                 <li>
                                                                                     <p>{cartVal.product} Price <b>{cartVal.productPrice} x {cartVal.quantity}</b></p>
+                                                                                    <small>{remarks} </small>
                                                                                 </li>
                                                                             </ul>
                                                                         })
                                                                     }
-                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">Confirm Order</button>
+                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">Accept Order</button>
                                                                 </div>
                                                             </div>
                                                         )
@@ -143,7 +131,6 @@ export default function VendorDashboard() {
                                                     })
                                                 }
                                             </div>
-
                                         </div>
                                     </div>
 

@@ -65,6 +65,7 @@ var collection = mongoose.Schema({
     pending: Boolean,
     phoneNo : String,
     address : String,
+    remarks : String,
     "createdOn" : { "type": Date, "default": Date.now },
 })
 
