@@ -45,7 +45,7 @@ app.use(cookieParser());
 
 
 
-app.use("/", express.static(path.resolve(path.join(__dirname, "../Web/build"))));
+app.use(express.static(path.resolve(path.join(__dirname, "../Web/build"))));
 
 app.use("/auth", authRoutes);
 
@@ -55,7 +55,8 @@ app.use("/auth", authRoutes);
 
 app.use(function (req, res, next) {
     if (!req.cookies.jToken) {
-        res.status(401).send("include http-only credentials with every request")
+        res.redirect("https://https://shopappnavtc.herokuapp.com/")
+        // res.status(401).send("include http-only credentials with every request")
         return;
     }
     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
