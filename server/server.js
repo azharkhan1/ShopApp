@@ -11,7 +11,7 @@ var authRoutes = require("./routes/auth");
 var http = require("http");
 
 var { SERVER_SECRET, PORT } = require("./core");
-var { userModel, order  , productModel} = require("./derepo");
+var { userModel, order, productModel } = require("./derepo");
 
 
 // To Send files
@@ -125,7 +125,22 @@ app.get("/profile", (req, res, next) => {
         })
 });
 
+app.get('/getproducts', (req, res, next) => {
 
+    productModel.find({}, (err, products) => {
+        if (!err) {
+            console.log('products are=>',products);
+            res.send({
+                products: products,
+            })
+        }
+        else {
+            res.send({
+                message: 'an error occured'
+            })
+        }
+    })
+})
 
 
 app.post("/placeOrder", (req, res, next) => {
@@ -244,9 +259,9 @@ app.post("/logout", (req, res, next) => {
 })
 
 
-app.post('/uploadProduct', upload.any() , (req,res,next)=>{
+app.post('/uploadProduct', upload.any(), (req, res, next) => {
 
-  
+
     bucket.upload(
         req.files[0].path,
         function (err, file, apiResponse) {
@@ -262,19 +277,19 @@ app.post('/uploadProduct', upload.any() , (req,res,next)=>{
                         console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
 
                         productModel.create({
-                            productName : req.body.productName,
-                            productPrice : req.body.productPrice,
-                            productImage : urlData[0],
-                            productDescription : req.body.productDescription,
-                            isActive : true,
-                        }).then((productCreated)=>{
+                            productName: req.body.productName,
+                            productPrice: req.body.productPrice,
+                            productImage: urlData[0],
+                            productDescription: req.body.productDescription,
+                            isActive: true,
+                        }).then((productCreated) => {
                             res.send({
-                                message : "product has been created",
-                                productCreated : productCreated,
+                                message: "product has been created",
+                                productCreated: productCreated,
                             })
-                        }).catch((err)=>{
+                        }).catch((err) => {
                             res.send({
-                                message : "an error occured",
+                                message: "an error occured",
                             })
                         })
                         try {
@@ -285,16 +300,17 @@ app.post('/uploadProduct', upload.any() , (req,res,next)=>{
                         }
                     }
                 })
-            }else{
+            } else {
                 console.log("err: ", err)
                 res.status(500).send({
-                    message : "an error occured",
+                    message: "an error occured",
                 });
             }
         });
 
 
 })
+
 
 server.listen(PORT, () => {
     console.log("server is running on: ", PORT);

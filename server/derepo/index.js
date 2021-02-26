@@ -42,7 +42,7 @@ var productSchema = new mongoose.Schema({
     productName: String,
     productDescription: String,
     productImage: String,
-    productPrice: String,
+    productPrice: Number,
     isActive : Boolean,
     stock : String,
 })

@@ -53,6 +53,11 @@ export default function AddProduct() {
         })
             .then(res => {
                 console.log('response is=>', res);
+                alert('successfully added');
+                productPrice.current.value = ''
+                productName.current.value = ''
+                productDescription.current.value=''
+                document.getElementById('myFile').value = ''
             })
             .catch(err => {
                 console.log(err);
