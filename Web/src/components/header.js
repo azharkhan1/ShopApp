@@ -1,5 +1,7 @@
 import Logout from '../components/logout';
-
+import{
+    Link
+} from 'react-router-dom';
 
 
 export default function Header({userName}){
@@ -12,7 +14,10 @@ export default function Header({userName}){
         <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav mr-auto">
                 <li className="nav-item active">
-                    <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+                  <Link to='/'><a className="nav-link" >Home <span className="sr-only">(current)</span></a></Link>
+                </li>
+                <li className="nav-item active">
+                  <Link to='/myorders'><a className="nav-link" >See Orders<span className="sr-only"></span></a></Link>
                 </li>
             </ul>
            <Logout/>

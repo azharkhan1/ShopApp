@@ -11,7 +11,32 @@ var authRoutes = require("./routes/auth");
 var http = require("http");
 
 var { SERVER_SECRET, PORT } = require("./core");
-var { userModel, order } = require("./derepo");
+var { userModel, order  , productModel} = require("./derepo");
+
+
+// To Send files
+const fs = require('fs')
+const multer = require("multer");
+const admin = require("firebase-admin");
+
+const storage = multer.diskStorage({ // https://www.npmjs.com/package/multer#diskstorage
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+        cb(null, `${new Date().getTime()}-${file.filename}.${file.mimetype.split("/")[1]}`)
+    }
+})
+var upload = multer({ storage: storage })
+
+var serviceAccount = require("./firebase/firebase.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://webmobile-48ab0.firebaseio.com"
+});
+
+const bucket = admin.storage().bucket("gs://webmobile-48ab0.appspot.com");
+
+
+
 
 
 var app = express();
@@ -101,6 +126,8 @@ app.get("/profile", (req, res, next) => {
 });
 
 
+
+
 app.post("/placeOrder", (req, res, next) => {
     console.log("req.body is = > ", req.body);
 
@@ -114,8 +141,8 @@ app.post("/placeOrder", (req, res, next) => {
                 userName: req.body.jToken.userName,
                 phoneNo: req.body.phoneNo,
                 address: req.body.address,
-                pending: true,
-                remarks : req.body.remarks ? req.body.remarks : null,
+                status: 'pending',
+                remarks: req.body.remarks ? req.body.remarks : null,
             }).then((orderPlaced) => {
                 res.status(200).send({
                     message: "Your request has been sent succesfully" + orderPlaced,
@@ -132,6 +159,8 @@ app.post("/placeOrder", (req, res, next) => {
 
 });
 
+
+
 app.get("/getOrders", (req, res, next) => {
     order.find({}, (err, data) => {
         if (!err) {
@@ -146,14 +175,35 @@ app.get("/getOrders", (req, res, next) => {
     })
 });
 
+app.get("/myorders", (req, res, next) => {
+    order.find({ userEmail: req.body.jToken.userEmail }, (err, data) => {
+        if (!err) {
+            console.log('getting orders=>', data)
+            res.status(200).send({
+                placedRequests: data,
+            });
+        }
+        else {
+            console.log("error : ", err);
+            console.log('error', err)
+
+            res.status(500).send({
+                message: 'error occored'
+            });
+        }
+    })
+});
+
+
+
 app.patch('/confirmOrder', (req, res, next) => {
     var { id } = req.body;
     userModel.find({ userEmail: req.body.jToken.userEmail }, (err, user) => {
         if (!err) {
             order.findById({ _id: id }, (err, data) => {
                 if (data) {
-                    console.log("Data ", data);
-                    data.updateOne({ pending: false }, {}, (err, updated) => {
+
+                    data.updateOne({ status: 'confirmed' }, {}, (err, updated) => {
                         if (updated) {
                             res.status(200).send({
                                 message: "order updated"
@@ -193,6 +243,58 @@ app.post("/logout", (req, res, next) => {
     res.send("logout succesfully");
 })
 
+
+app.post('/uploadProduct', upload.any() , (req,res,next)=>{
+
+  
+    bucket.upload(
+        req.files[0].path,
+        function (err, file, apiResponse) {
+            if (!err) {
+                // console.log("api resp: ", apiResponse);
+
+                // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+                file.getSignedUrl({
+                    action: 'read',
+                    expires: '03-09-2491'
+                }).then((urlData, err) => {
+                    if (!err) {
+                        console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+
+                        productModel.create({
+                            productName : req.body.productName,
+                            productPrice : req.body.productPrice,
+                            productImage : urlData[0],
+                            productDescription : req.body.productDescription,
+                            isActive : true,
+                        }).then((productCreated)=>{
+                            res.send({
+                                message : "product has been created",
+                                productCreated : productCreated,
+                            })
+                        }).catch((err)=>{
+                            res.send({
+                                message : "an error occured",
+                            })
+                        })
+                        try {
+                            fs.unlinkSync(req.files[0].path)
+                            //file removed
+                        } catch (err) {
+                            console.error(err)
+                        }
+                    }
+                })
+            }else{
+                console.log("err: ", err)
+                res.status(500).send({
+                    message : "an error occured",
+                });
+            }
+        });
+
+
+})
 
 server.listen(PORT, () => {
     console.log("server is running on: ", PORT);

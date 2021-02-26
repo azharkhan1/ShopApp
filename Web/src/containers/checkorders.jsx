@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { Link } from "react-router-dom";
+
+
 
 import "./css/app.css";
 import './css/line-awesome.css'
@@ -15,18 +16,21 @@ import './css/flatpickr.min.css'
 import "./css/vendorDashboard.css";
 
 // importing context
-import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
+import { useGlobalState } from "../context/globalContext";
 
 // importing url 
 import url from "../core";
 
+
+import Logout from "../components/logout";
+
+
 // import socket
 import socket from "../config/socket";
 
-// import components
-import Logout from '../components/logout';
 
-export default function VendorDashboard() {
+
+export default function CheckOrders() {
 
     console.log('socket is=>', socket);
     const globalState = useGlobalState();
@@ -40,9 +44,7 @@ export default function VendorDashboard() {
         }).then((response) => {
 
             response.data.placedRequests.map((value) => {
-                if (value.status === 'pending') {
-                    arr.push(value);
-                }
+                arr.push(value);
             })
             setOrders(arr);
         }, (error) => {
@@ -54,7 +56,7 @@ export default function VendorDashboard() {
         })
     }, [realTime])
 
-  
+
     const confirmOrder = (index) => {
         console.log(orders[index]._id)
         axios({
@@ -75,28 +77,27 @@ export default function VendorDashboard() {
     return (
         <div>
             <div className="wrapper">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="#">{globalState.user.userName}</a>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarText">
-            <ul className="navbar-nav mr-auto">
-                <li className="nav-item active">
-                  <Link to='/'><a className="nav-link" >Home <span className="sr-only">(current)</span></a></Link>
-                </li>
-                <li className="nav-item active">
-                  <Link to='/checkorders'><a className="nav-link" >See Orders<span className="sr-only"></span></a></Link>
-                </li>
-                <li className="nav-item active">
-                  <Link to='/addproduct'><a className="nav-link" >Add Product<span className="sr-only"></span></a></Link>
-                </li>
-            </ul>
-           <Logout/>
-        </div>
-    </nav>
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <a className="navbar-brand" href="#">{globalState.user.userName}</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" />
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarText">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <Link to='/'><a className="nav-link" >Home <span className="sr-only">(current)</span></a></Link>
+                            </li>
+                            <li className="nav-item active">
+                                <Link to='/checkorders'><a className="nav-link" >See Orders<span className="sr-only"></span></a></Link>
+                            </li>
+                            <li className="nav-item active">
+                                <Link to='/addproduct'><a className="nav-link" >Add Products<span className="sr-only"></span></a></Link>
+                            </li>
+                        </ul>
+                        <Logout />
+                    </div>
+                </nav>
                 <main>
-         
                     <div className="main-section">
                         <div className="container">
                             <div className="main-section-data">
@@ -124,7 +125,7 @@ export default function VendorDashboard() {
                                             </div>
                                             <div>
                                                 {
-                                                    orders.reverse().map(({ cart, userEmail, total, phoneNo, address , remarks }, index) => {
+                                                    orders.reverse().map(({ cart, userEmail, total, phoneNo, address, remarks }, index) => {
                                                         return (
                                                             <div key={index} className="card text-center" style={{ width: '18rem' }}>
                                                                 <div className="card-body">

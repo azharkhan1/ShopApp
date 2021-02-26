@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import url from "../core/index";
 import "./css/app.css";
@@ -14,15 +14,7 @@ import "./css/dashboard.css";
 
 
 // import global state
-import { useGlobalState, useGlobalStateUpdate } from "../context/globalContext";
-
-// importing components
-import Header from '../components/header'
-
-
-axios.defaults.withCredentials = true
-
-
+import { useGlobalState } from "../context/globalContext";
 
 
 
@@ -129,7 +121,7 @@ export default function UserDashboard() {
                 total: productTotal,
                 address: address.current.value,
                 phoneNo: phoneNo.current.value,
-                remarks : remarks.current.value,
+                remarks: remarks.current.value,
             },
 
         }).then((response) => {
@@ -151,26 +143,17 @@ export default function UserDashboard() {
     return (
         <div>
             <div className="wrapper">
-                <Header userEmail={globalState.user.userName} />
                 <main>
                     <div className="main-section">
                         <div className="container">
                             <div className="main-section-data">
                                 <div className="row">
-
                                     <div className="col-lg-9 col-md-8 no-pd">
                                         <div className="main-ws-sec">
-
                                             <div className="posts-section">
-                                                {/* <div className="post-bar">
-                                                </div> */}
-
-
-
                                                 <div className="row">
                                                     {
                                                         products.map((value, index) => {
-
                                                             return <div key={index} className="card mr-2 mt-2" style={{ width: "15rem" }} >
                                                                 <img src={value.url} className="card-img-top" alt="..." />
                                                                 <div className="card-body">
@@ -188,9 +171,7 @@ export default function UserDashboard() {
                                                                     </li>
                                                                 </ul>
                                                                 <button onClick={value.added ? () => { return } : (e) => addCart(value, index)} className="cart-btn">{value.added ? "Added" : "Add to cart"}</button>
-
                                                             </div>
-
                                                         })
                                                     }
                                                 </div>
@@ -238,7 +219,6 @@ export default function UserDashboard() {
                                         {
                                             cart.length > 0
                                                 ?
-
                                                 <form onSubmit={cart.length > 0 ? (e) => checkOut(e) : () => { return }}>
                                                     <div className="form-row align-items-center">
                                                         <div className="col-auto">
@@ -251,7 +231,7 @@ export default function UserDashboard() {
                                                         <div className="col-auto">
                                                             <label className="sr-only" htmlFor="inlineFormInputGroup">Address</label>
                                                             <div className="input-group mb-2">
-                                                    
+
                                                                 <input required type="text" className="form-control" id="inlineFormInputGroup"
                                                                     placeholder="Delivery Address"
                                                                     ref={address}
@@ -279,15 +259,6 @@ export default function UserDashboard() {
                     </div>
                 </main>
             </div>
-
-
-
-
-
-
-
-
-
         </div>
     )
 }

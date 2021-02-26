@@ -1,5 +1,5 @@
 
-var {URIDB} = require("../core");
+var { URIDB } = require("../core");
 
 
 
@@ -7,7 +7,7 @@ var mongoose = require("mongoose");
 
 
 
-let dbURI = URIDB 
+let dbURI = URIDB
 
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -38,14 +38,24 @@ process.on("SIGINT", () => {
 
 })
 
+var productSchema = new mongoose.Schema({
+    productName: String,
+    productDescription: String,
+    productImage: String,
+    productPrice: String,
+    isActive : Boolean,
+    stock : String,
+})
+
+var productModel = mongoose.model('products' , productSchema);
+
 var userSchema = new mongoose.Schema({
     userEmail: String,
     userName: String,
     userPassword: String,
-    userAddress : String,
-    userPhone : String,
-    points : String,
-    roll : String,
+    userAddress: String,
+    userPhone: String,
+    roll: String,
 });
 var userModel = mongoose.model("users", userSchema);
 
@@ -54,27 +64,28 @@ var userModel = mongoose.model("users", userSchema);
 var otpSchema = new mongoose.Schema({
     "userEmail": String,
     "otp": String,
-    "createdOn" : { "type": Date, "default": Date.now },
+    "createdOn": { "type": Date, "default": Date.now },
 });
 var otpModel = mongoose.model("otp", otpSchema);
 
 var collection = mongoose.Schema({
-    cart : Array,
-    total : String,
-    userEmail : String,
-    pending: Boolean,
-    phoneNo : String,
-    address : String,
-    remarks : String,
-    "createdOn" : { "type": Date, "default": Date.now },
+    cart: Array,
+    total: String,
+    userEmail: String,
+    status: String,
+    phoneNo: String,
+    address: String,
+    remarks: String,
+    "createdOn": { "type": Date, "default": Date.now },
 })
 
-var order = mongoose.model("order",collection);
+var order = mongoose.model("order", collection);
 
 
 
 module.exports = {
     userModel: userModel,
     otpModel: otpModel,
-    order : order,
+    order: order,
+    productModel : productModel,
 }
