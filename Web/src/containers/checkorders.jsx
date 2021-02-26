@@ -143,7 +143,7 @@ export default function CheckOrders() {
                                                                             </ul>
                                                                         })
                                                                     }
-                                                                    <button onClick={() => confirmOrder(index)} className="btn btn-primary">Accept Order</button>
+                                                                  
                                                                 </div>
                                                             </div>
                                                         )
